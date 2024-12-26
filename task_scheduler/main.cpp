@@ -24,16 +24,12 @@ class TaskScheduler {
     
 
     public:
-        
         void executeTask() {
-            
             while(true) {
                 unique_lock <mutex> lock(mtx);
-
                 cv.wait(lock , [this] {
                     return !taskList.empty() || stop;
                 });
-
                 if(taskList.empty() && stop)
                     break;
                 auto [priority , taskName] = taskList.top();
@@ -44,13 +40,9 @@ class TaskScheduler {
 
         void scheduleTask(int priority , string taskName) {
             unique_lock <mutex> lock(mtx);
-            // cv.wait(lock , [this] {
-            //     return !taskList.empty() && !stop;
-            // });
             cout << "Scheduling Task " << taskName << "\n";
             taskList.push({priority , taskName});
             cv.notify_one();
-
         }
 
         void stop_execution() {
